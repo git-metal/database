@@ -97,6 +97,8 @@
 创建数据库:
     create database <database>;
     mysqladmin -u root -p create <database>
+    CREATE DATABASE dbname DEFAULT CHARSET utf8 COLLATE utf8_general_ci #排序时根据utf8变码格式来排序
+    show create database db_name    #查看db生成的DDL
 删除数据库:
     drop database <数据库名>;
     mysqladmin -u root -p drop <database>
@@ -107,7 +109,12 @@
         name VARCHAR(100),
         description VARCHAR(100),
         primary key (name)
-    )ENGINE=InnoDB;
+    )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    
+    desc tabl_name;                 #显示表结构，字段类型，主键，是否为空等属性，但不显示外键
+    show columns from tbale;        
+    show create table table_name;   #查看表生成的DDL
+
 
 删除表：
     drop table <table_name>;
@@ -118,3 +125,16 @@
 
 修改表字段：
     alter 
+
+
+mysql各种utf8编码格式: 
+    utf8_bin: 将字符串中的每一个字符用二进制数据存储，区分大小写
+    utf8_general_ci: 不区分大小写，ci为case insensitive的缩写，即大小写不敏感
+    utf8_general_cs: 区分大小写，cs为case sensitive的缩写，即大小写敏感
+    用法：
+        COLLATE:指定数据集如何排序
+        COLLATE utf8_bin
+
+
+
+

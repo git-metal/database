@@ -1,0 +1,22 @@
+
+数据库优化：
+    #创建索引
+    #视图
+        视图本身不能建立索引
+    #IN,NOT IN 
+        替换为Exists, Not Exists
+    #<>, !=
+        不等于操作符不会用到索引，对它的操作只会产生全表扫描
+    #>或者<
+        替换成>=, <=，能够更好的应用索引
+    #where后的条件顺序
+        mysql：采用从左至右的顺序解析where字句
+        oracle：采用从右至左的顺序解析where字句
+    #group by
+        group by后面的分组条件越多越慢
+    #转换类型
+        sql中转换类型会很慢，尽量不要使用to_char,to_date等函数
+    #select
+        select字句中避免使用*
+    
+
