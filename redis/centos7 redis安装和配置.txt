@@ -1,0 +1,63 @@
+
+官网： https://redis.io/download
+
+安装Redis 4.0.10：
+    wget http://download.redis.io/releases/redis-4.0.10.tar.gz
+    tar xzf redis-4.0.10.tar.gz
+    cd redis-4.0.10
+    make
+    make test
+    make PREFIX=/usr/local/redis install 
+    cp redis.conf /usr/local/redis
+
+    #修改redis.conf
+        daemonize yes
+    #启动
+        ./bin/redis-server ./redis.conf
+    #关闭
+        ./bin/redis-cli shutdown
+    #端口 6379
+
+    redis-cli           #
+    redis-server        #
+
+配置：
+    info                    #获取 redis 服务器的统计信息
+    config get *            #获取所有配置项
+    config get loglevel     #
+    config set CONFIG_SETTING_NAME NEW_CONFIG_VALU  #修改配置
+
+    #配置项
+    daemonize               #是否启用守护进程
+    pidfile                 #以守护进程方式运行时，Redis默认会把pid写入/var/run/redis.pid文件
+    port                    #默认端口为6379
+    bind                    #绑定的主机地址
+    timeout                 #当客户端闲置多长时间后关闭连接，如果指定为0，表示关闭该功能
+    loglevel                #指定日志记录级别，Redis总共支持四个级别：debug、verbose、notice、warning
+    logfile                 #日志记录方式
+    databases               #设置数据库的数量，默认数据库为0，可以使用SELECT <dbid>命令在连接上指定数据库id
+    save <seconds> <changes>#指定在多长时间内，有多少次更新操作，就将数据同步到数据文件，可以多个条件配合
+    rdbcompression          #指定存储至本地数据库时是否压缩数据，默认为yes
+    dbfilename              #指定本地数据库文件名
+    dir                     #指定本地数据库存放目录
+    slaveof                 #设置当本机为slav服务时，设置master服务的IP地址及端口，在Redis启动时，它会自动从master进行数据同步
+        slaveof <masterip> <masterport>
+    masterauth              #当master服务设置了密码保护时，slav服务连接master的密码
+        masterauth <master-password>
+    requirepass             #设置Redis连接密码
+    maxclients              #设置同一时间最大客户端连接数，默认无限制
+    maxmemory               #指定Redis最大内存限制，Redis在启动时会把数据加载到内存中
+    appendonly              #指定是否在每次更新操作后进行日志记录，Redis在默认情况下是异步的把数据写入磁盘，如果不开启，可能会在断电时导致一段时间内的数据丢失
+    appendfilename          #指定更新日志文件名
+    appendfsync             #指定更新日志条件，共有3个可选值：
+        no：表示等操作系统进行数据缓存同步到磁盘（快） 
+        always：表示每次更新操作后手动调用fsync()将数据写到磁盘（慢，安全） 
+        everysec：表示每秒同步一次（折衷，默认值）
+    vm-enabled              #指定是否启用虚拟内存机制，默认值为no
+    vm-swap-file            #虚拟内存文件路径
+    vm-max-memory           #将所有大于vm-max-memory的数据存入虚拟内存,无论vm-max-memory设置多小,所有索引数据都是内存存储的（Redis的索引数据就是keys）,也就是说,当vm-max-memory设置为0的时候,其实是所有value都存在于磁盘。默认值为0
+    vm-page-size            #Redisswap文件分成了很多的page，一个对象可以保存在多个page上面，但一个page上不能被多个对象共享，vm-page-size是要根据存储的 数据大小来设定的
+    vm-pages                #设置swap文件中的page数量，由于页表（一种表示页面空闲或使用的bitmap）是在放在内存中的，，在磁盘上每8个pages将消耗1byte的内存。
+    vm-max-threads          #设置访问swap文件的线程数,最好不要超过机器的核数,如果设置为0,那么所有对swap文件的操作都是串行的
+    glueoutputbuf           #设置在向客户端应答时，是否把较小的包合并为一个包发送
+    include                 #指定包含其它的配置文件，可以在同一主机上多个Redis实例之间使用同一份配置文件，而同时各个实例又拥有自己的特定配置文件
