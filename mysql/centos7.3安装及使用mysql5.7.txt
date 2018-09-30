@@ -39,6 +39,11 @@
     service mysqld start|stop|restart|status
     systemctl start|stop|status|restart mysqld
 
+连接:
+    mysql -u root -p123
+    mysql -h localhost -u root -p123
+    mysql -h 192.168.0.201 -P 3306 -u root -p123
+
 基本配置：
     获取初始密码:启动后会在/var/log/mysqld.log中自动生成一个随机密码（grep "password" /var/log/mysqld.log）
     修改初始密码:
