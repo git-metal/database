@@ -141,5 +141,143 @@ mysql各种utf8编码格式:
         COLLATE utf8_bin
 
 
+#数据库操作:
+    show databases;
+    user database_name;
+    show tables;
+    desc table_name;
+    show columns from table_name;
+    show index from table_name;         #显示数据表的详细索引信息
+    show table status from db_name;     #输出Mysql数据库管理系统的性能及统计信息
+    mysqldump -u username -ppassword dbname > dbname.sql                  #导出整个数据库（包括数据库中的数据）
+    mysqldump -u username -ppassword dbname tablename > tablename.sql     #导出数据库中的数据表（包括数据）
+    mysqldump -u username -ppassword -d dbname > dbname.sql               #到处数据库结构
+    mysqldump -u username -ppassword -d dbname tablename > tablename.sql  #导出数据库中数据表的表结构
+    select CONNECTION_ID()；             #查找当前的连接ID
+    show create table table_name;        #
+    show create database database_name;
 
+    #SELECT语句
+        SELECT 
+            column_1, column_2, ...
+        FROM
+            table_1
+        [INNER | LEFT |RIGHT] JOIN table_2 ON conditions
+        WHERE
+            conditions
+        GROUP BY column_1
+        HAVING group_conditions
+        ORDER BY column1 [ASC|DESC], column2 [ASC|DESC],...
+        LIMIT length
+        offset length;
 
+        SELECT lastname, firstname, jobtitle FROM employees;
+        SELECT lastname, firstname, jobtitle FROM employees limit 10 offset 5;
+
+    #SELECT DISTINCT语句
+        SELECT DISTINCT
+            column_1, column_2, ...
+        FROM
+            table_name
+        WHERE
+            where_conditions;
+
+        SELECT DISTINCT lastname FROM employees ORDER BY lastname;
+        (!) 如果列具有NULL值，并且对该列使用DISTINCT子句，MySQL将保留一个NULL值，并删除其它的NULL值.
+
+    #MySQL DISTINCT和聚合函数
+        SELECT 
+            COUNT(DISTINCT state)
+        FROM
+            customers
+        WHERE
+            country = 'USA';
+
+    #like
+        通配符:
+            %:匹配任何字符串的零个或多个字符
+            _:匹配任何单个字符
+        转义符:
+            默认转义字符: \
+            自定义转义字符(ESCAPE): SELECT productCode, productName FROM products WHERE productCode LIKE '%$_20%' ESCAPE '$';
+
+    #order by
+        ORDER BY column1 [ASC|DESC], column2 [ASC|DESC],... （默认升序排序）
+        #按表达式排序示例
+            SELECT
+             ordernumber,
+             orderlinenumber,
+             quantityOrdered * priceEach
+            FROM
+             orderdetails
+            ORDER BY
+             ordernumber,
+             orderLineNumber,
+             quantityOrdered * priceEach;
+            SELECT
+             ordernumber,
+             orderlinenumber,
+             quantityOrdered * priceEach AS subtotal
+            FROM
+             orderdetails
+            ORDER BY
+             ordernumber,
+             orderLineNumber,
+             subtotal;
+        #自定义排序顺序：FIELD()
+            SELECT 
+                orderNumber, status
+            FROM
+                orders
+            ORDER BY FIELD(status,
+                    'In Process',
+                    'On Hold',
+                    'Cancelled',
+                    'Resolved',
+                    'Disputed',
+                    'Shipped');
+
+#表连接
+    inner join:
+        select column_list from t1 INNER JOIN t2 ON join_condition1 INNER JOIN t3 ON join_condition2
+    left oin: 
+        select t1.c1, t1.c2, t2.c1, t2.c2 from tc left join t2 on t1.c1 = t2.c1;
+        select t1.c1, t1.c2, t2.c1, t2.c2 from tc left join t2 using(c1);
+    cross join: 从连接的表返回行的笛卡儿乘积
+        select * from t1 cross join t2 where t1.id = t2.id
+
+#表锁定
+    LOCK TABLES table_name [READ | WRITE]
+    UNLOCK TABLES;
+
+#MySQL序列
+    AUTO_INCREMENT:
+        1. 每个表只有一个AUTO_INCREMENT列，其数据类型通常为整数
+        2. 必须对AUTO_INCREMENT列进行索引，它可以是PRIMARY KEY或UNIQUE索引
+        3. AUTO_INCREMENT列必须具有NOT NULL约束。当您为列设置AUTO_INCREMENT属性时，MySQL会自动将NOT NULL约束隐式添加到列中
+
+#UNIQUE
+    CREATE UNIQUE INDEX index_name ON table_name(index_column_1,index_column_2,...);
+    ALTER TABLE table_name ADD CONSTRAINT constraint_name UNIQUE KEY(column_1,column_2,...);
+    ALTER TABLE users ADD UNIQUE INDEX username_unique (username ASC) ;
+    ALTER TABLE users ADD UNIQUE INDEX  email_unique (email ASC) ;
+
+#外键
+    #create table语句中
+        CONSTRAINT constraint_name
+        FOREIGN KEY foreign_key_name (columns)
+        REFERENCES parent_table(columns)
+        ON DELETE action
+        ON UPDATE action
+    #修改表
+        ALTER table_name
+        ADD CONSTRAINT constraint_name
+        FOREIGN KEY foreign_key_name(columns)
+        REFERENCES parent_table(columns)
+        ON DELETE action
+        ON UPDATE action;
+    #删除外键
+        ALTER TABLE table_name DROP FOREIGN KEY constraint_name;
+    #禁用|启动外键 （导入数据时有用）
+        SET foreign_key_checks = 0  #禁用
+        SET foreign_key_checks = 0  #启用
