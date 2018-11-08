@@ -1,0 +1,70 @@
+
+
+Master:
+    /etc/my.cnf:
+        log-bin=mysql-bin                       #
+        server-id=100                           #
+        binlog-ignore-db=information_schema     #
+        binlog-ignore-db=cluster                #
+        binlog-ignore-db=mysql-bin              #
+        binlog-do-db=test_db                    #
+
+        --extend
+        innodb_flush_log_at_trx_commit=1
+        sync_binlog=1
+        skip-networking=OFF
+
+
+    #设置root用户有权限授权
+    update mysql.user set grant_priv='Y' where user='root';
+    flush privileges;
+
+    #创建replication用户 repluser:Huawei@123
+    mysql> CREATE USER 'repluser'@'%' IDENTIFIED BY 'Huawei@123';
+    mysql> GRANT REPLICATION SLAVE ON *.* TO 'repluser'@'%';
+
+    #grant replication slave,FILE on *.* to 'repluser'@'192.168.1.149' identified by 'Huawei@123';
+    #grant replication client,replication slave on *.* to rep@'192.168.1.149' identified by 'Huawei@123';
+    #grant replication slave,FILE on *.* to 'repluser'@'192.168.1.149' identified by 'Huawei@1234';
+
+    #获取master的日志坐标
+    FLUSH TABLES WITH READ LOCK;            # blocks COMMIT operations for InnoDB tables
+    UNLOCK TABLES;
+    show master status;
+
+    #
+    mysqldump -uroot -pHuawei@123 --all-databases --master-data > dbdump.db         #备份整个数据库
+
+
+
+Slave:
+    /etc/my.cnf:
+        server-id=101
+
+
+    #设置master节点
+    CHANGE MASTER TO
+        MASTER_HOST='192.168.1.149',
+        MASTER_USER='repluser',
+        MASTER_PASSWORD='Huawei@123',
+        MASTER_LOG_FILE='mysql-bin.000003',
+        MASTER_LOG_POS=154;
+
+    #启动slave
+    start slave；
+    show slave status;
+
+    #
+    mysqladmin stop-slave
+    mysqladmin sart-slave
+    mysql -e 'stop slave sql_thread'    #停止slave sql
+    start slave sql_thread              #启动slave sql
+
+keepalive:
+    master:
+        auto_increment_increment = 100
+        auto_increment_offset = 2
+
+    slave:
+        auto_increment_increment = 101
+        auto_increment_offset = 2        

@@ -83,7 +83,10 @@
             SHOW GRANTS for 'root'@'%';
 
         删除用户:
-            命令: DROP USER 'username'@'host';
+            DROP USER 'username'@'host';
+
+        查看用户:
+            select user,host from mysql.user;
 
         设置与更改用户密码:
             命令: SET PASSWORD FOR 'username'@'host' = PASSWORD('newpassword');
@@ -151,8 +154,15 @@ mysql各种utf8编码格式:
     show table status from db_name;     #输出Mysql数据库管理系统的性能及统计信息
     mysqldump -u username -ppassword dbname > dbname.sql                  #导出整个数据库（包括数据库中的数据）
     mysqldump -u username -ppassword dbname tablename > tablename.sql     #导出数据库中的数据表（包括数据）
-    mysqldump -u username -ppassword -d dbname > dbname.sql               #到处数据库结构
+    mysqldump -u username -ppassword -d dbname > dbname.sql               #导出数据库结构
     mysqldump -u username -ppassword -d dbname tablename > tablename.sql  #导出数据库中数据表的表结构
+    mysql -u username -ppassword dbname < test.sql                        #导入
+    #导出导入所有数据库
+    mysqldump -u username -ppassword -S /usr/lib/mysql/mysql.sock --all-databases > test.sql
+    mysqldump -u username -ppassword -S /usr/lib/mysql/mysql.sock --all-databases | gzip  test.sql.gz
+    mysql -uusername ppassword -S /usr/lib/mysql/mysql.sock  < test.sql
+    #导出导入单个数据库
+
     select CONNECTION_ID()；             #查找当前的连接ID
     show create table table_name;        #
     show create database database_name;

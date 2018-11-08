@@ -1,19 +1,20 @@
-
+﻿
 create database testdb;
 
 create table country(
     id  int auto_increment primary key,
     name varchar(255) not null unique,
     descript text,
-    date timestamp DEFAULT CURRENT_TIMESTAMP,
+    date timestamp DEFAULT CURRENT_TIMESTAMP
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+insert into country (name, descript) values ("test", "test desc");
 
 create table province(
     id int auto_increment,
     name varchar(255) not null,
     descript text,
-    country_id int，
+    country_id int,
     primary key (id),
     foreign key (country_id) references country(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -28,3 +29,6 @@ create table province(
 
 #修改表
     ALTER TABLE country ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+

@@ -1,0 +1,21 @@
+
+mysql>
+    select version(), 
+        current_date,
+        now()
+        database(),          #当前使用的使用的数据库
+        ;         
+
+
+    show databases;
+    show tables;
+    desc table_name;
+    show status;
+
+
+#mysqld
+    mysqld --verbose --help         #
+
+
+#mysqlbinlog 
+    mysqlbinlog mysql-bin-000001.log    #/etc/my.cnf 中的[client] default-character-set=utf8需要去掉
