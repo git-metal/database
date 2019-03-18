@@ -19,3 +19,37 @@ mysql>
 
 #mysqlbinlog 
     mysqlbinlog mysql-bin-000001.log    #/etc/my.cnf 中的[client] default-character-set=utf8需要去掉
+
+
+复制表:
+    1. insert into table_1 select c1, c2 from table_2;
+    2. create table table_bak like table;
+       insert into table_bak select * from table;
+
+变量：
+    #全局变量
+    show global variables;                       #
+    show global variables like '%xxx%';          #
+    select @@global.autocommit;                  #
+    set @@global.autocommit = 1;                 #
+    set global autocommit = 1;                   #
+    
+    #会话变量
+    show session variables;                      #
+    show session variables like '%xxx%';         #
+    select @@session.autocommit;                 #
+    set @@session.autocommit = 1;                #
+    set @@session.autocommit = 1;                #
+
+    #用户变量 （作用域是整个会话）
+    set @var = 1;
+    set @var := 1;
+    select @var:=password from user limit 0,1;      #select 赋值时必须使用 := 
+
+    #存储过程变量 （作用域是存储过程）
+    declare var int default 0；
+
+
+
+
+
